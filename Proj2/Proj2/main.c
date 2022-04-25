@@ -64,13 +64,5 @@ int main(void)
 		}
 		avr_wait(500);
 		
-		
-		/*
-		if (is_pressed(0,0)) {
-			SET_BIT(PORTB, 0);
-		} else {
-			CLR_BIT(PORTB, 0);	
-		}
-		*/
     }
 }
