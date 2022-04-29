@@ -1,19 +1,6 @@
+#include <avr/io.h>
 #include "avr.h"
 #include "lcd.h"
-
-
-void
-avr_wait(unsigned short msec)
-{
-	TCCR0 = 3;
-	while (msec--) {
-		TCNT0 = (unsigned char)(256 - (XTAL_FRQ / 64) * 0.001);
-		SET_BIT(TIFR, TOV0);
-		WDR();
-		while (!GET_BIT(TIFR, TOV0));
-	}
-	TCCR0 = 0;
-}
 
 int is_pressed(int r, int c) {
 	// Set all 8 GPIOs to N/C
@@ -45,14 +32,32 @@ int get_key() {
 	return 0;
 }
 
+typedef struct {
+	int year;
+	unsigned char month;
+	} DateTime;
+
+
+// MAIN LOOP
 
 int main(void)
 {
     // Set write to PB0
     SET_BIT(DDRB, 0);
-    	
+    
+	// Init display
+	lcd_init();
+
+
+	char word[6] = "Hello";
     while (1) {
 		
+		avr_wait(1000);
+		lcd_puts2(word);
+		avr_wait(1000);
+		
+		
+		/*
 		int i, k;
 		k = get_key();
 		for (i=0; i < k; i++) {
@@ -63,6 +68,10 @@ int main(void)
 			avr_wait(200);
 		}
 		avr_wait(500);
+		*/
+		
+		
+		
 		
     }
 }
