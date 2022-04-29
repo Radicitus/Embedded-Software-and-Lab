@@ -80,7 +80,7 @@ void advance_dt(DateTime *dt) {
 }
 
 void init_dt(DateTime *dt) {
-	dt->year = 2022;
+	dt->year = 2090;
 	dt->month = 12;
 	dt->day = 31;
 	dt->hour = 23;
@@ -92,9 +92,9 @@ void print_dt(const DateTime *dt) {
 	char date[17];
 	// Print date on top row
 	lcd_pos(0,0);
-	sprintf(date, "%04d-%02d-%02d", dt->year, 
-								    dt->month, 
-								    dt->day);
+	sprintf(date, "%02d-%02d-%04d", dt->month, 
+								    dt->day,
+									dt->year);
 	lcd_puts2(date);
 	
 	// Print time on bottom row
@@ -120,10 +120,61 @@ int main(void)
 
     while (1) {
 		
+		// Enter setting mode
+		int k = get_key();
+		
+		// Enter settingMode
+		if (k == 12) {
+			
+			// Check if exit settingMode, otherwise keep taking key input
+			while (k != 16) {
+				k = get_key();
+				
+				// Month
+				if (k == 1) {
+					dt.month = ((dt.month) % 12 + 1);
+				}
+				
+				// Day
+				if (k == 2) {
+					int mDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+					if (dt.day >= mDays[dt.month]) {
+						dt.day = 1;
+					} else {
+						++dt.day;
+					}
+				}
+				
+				// Year
+				if (k == 3) {
+					++dt.year;
+				}
+				
+				// Hour
+				if (k == 5) {
+					dt.hour = ((dt.hour + 1) % 24);
+				}
+				
+				// Minute
+				if (k == 6) {
+					dt.minute = ((dt.minute + 1) % 60);
+				}
+
+				// Second
+				if (k == 7) {
+					dt.second = ((dt.second + 1) % 60);
+				}
+				
+				// Update display
+				print_dt(&dt);
+				avr_wait(500);
+			}
+		}
+		
+		
 		avr_wait(1000);
 		advance_dt(&dt);
 		print_dt(&dt);
-		
 		
 		/*
 		int i, k;
@@ -137,9 +188,6 @@ int main(void)
 		}
 		avr_wait(500);
 		*/
-		
-		
-		
 		
     }
 }
