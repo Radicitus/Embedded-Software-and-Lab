@@ -66,16 +66,23 @@ void advance_dt(DateTime *dt) {
 	}
 	
 	// Day to Month
-	int days[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+	int mDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+	if (dt->day > mDays[dt->month]) {
+		dt->day = 1;
+		++dt->month;
+	}
 	
 	// Month to Year
-	
+	if (dt->month > 12) {
+		dt->month = 1;
+		++dt->year;
+	}
 }
 
 void init_dt(DateTime *dt) {
 	dt->year = 2022;
 	dt->month = 12;
-	dt->day = 19;
+	dt->day = 31;
 	dt->hour = 23;
 	dt->minute = 59;
 	dt->second = 50;
