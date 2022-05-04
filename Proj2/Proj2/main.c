@@ -80,9 +80,9 @@ void advance_dt(DateTime *dt) {
 }
 
 void init_dt(DateTime *dt) {
-	dt->year = 2090;
-	dt->month = 12;
-	dt->day = 31;
+	dt->year = 2020;
+	dt->month = 4;
+	dt->day = 30;
 	dt->hour = 23;
 	dt->minute = 59;
 	dt->second = 50;
