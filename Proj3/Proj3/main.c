@@ -1,7 +1,7 @@
 #include "avr.h"
 
 typedef enum {
-	A, As, B, C, D, Ds, E, F, Fs, G, Gs
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 } Note;
 
 typedef enum {
@@ -23,19 +23,28 @@ void play_song(const PlayingNote song[], int length) {
 
 void play_note(const PlayingNote* note) {
 	int i, k;
+	
+	double f = (2^( note->note / 12) * 220);
+	
+	float p = 1 / f;
+	float k = note->duration / p;
+	float th = p /2;
+	
 	for (i = 0; i < k; i++) {
 		SET_BIT(PORTA, 0);
-		avr_wait()
+		avr_wait(th);
+		CLR_BIT(PORTA, 0);
+		avr_wait(th);
 	}
 }
 
 
 PlayingNote shooting_stars[] = {
-	{D, Wn},
-	{D, Hn},
-	{E, Hn},
-	{B, Qn},
-	{Gs, Qn}
+	{5, Wn},
+	{5, Hn},
+	{7, Hn},
+	{2, Qn},
+	{11, Qn}
 };
 
 int main(void)
