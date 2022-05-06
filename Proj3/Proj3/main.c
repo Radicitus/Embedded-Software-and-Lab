@@ -17,16 +17,15 @@ typedef struct {
 void play_song(const PlayingNote song[], int length) {
 	int i;
 	for (i = 0; i < length; i++) {
-	}
 		play_note(&song[i]);
 	}
+}
 
 void play_note(const PlayingNote* note) {
 	int i, k;
 	int th;
 	double duration = note->duration;
 	
-	/*
 	switch(note->duration){
 		case Wn:
 			duration = 4;
@@ -41,16 +40,15 @@ void play_note(const PlayingNote* note) {
 			duration = .5;
 			break;
 	}
-	*/
 	
 	switch(note->note){
 		case A:
-			th = 23;
+			th = 11;
 			k = duration * 220;
 			break;
 		case As:
 			th = 21;
-			k = duration * 233;
+			k = duration * 240;
 			break;
 		case B:
 			th = 20;
@@ -77,7 +75,7 @@ void play_note(const PlayingNote* note) {
 			k = duration * 330;
 			break;
 		case F:
-			th = 14;
+			th = 28;
 			k = duration * 349;
 			break;
 		case Fs:
@@ -102,15 +100,28 @@ void play_note(const PlayingNote* note) {
 	}
 }
 
+PlayingNote test1[] = {
+	{A, Hn},
+	{As, Hn},
+	{F, Hn},
+	{Gs, Hn},
+	{Fs, Hn},
+};
 
-PlayingNote shooting_stars[] = {
-	{A, En},
-	{B, En},
-	{C, En},
-	{D, En},
-	{E, En},
-	{F, En},
-	{G, En}
+PlayingNote fur_elise[] = {
+	{A, Qn},
+	{Gs, Qn},
+		
+	{A, Qn},
+	{Gs, Qn},
+		
+	{As, Qn},
+	{E, Hn},
+		
+	{E, Qn},
+	{G, Wn},
+	{F, Qn},
+	{D, Wn}
 };
 
 main() {
@@ -123,12 +134,18 @@ main() {
 	
     while(1)
     {
+		
+		play_song(fur_elise, 10);
+		avr_wait(1000);
+		
+		/*
 		// While button pushed
-        if(!GET_BIT(PINA, 1)) {
+        if(GET_BIT(PINA, 1)) {
 			SET_BIT(PORTB, 0);
 			play_song(shooting_stars, 7);
 		} else {
 			CLR_BIT(PORTB, 0);	
 		}
+		*/
 	}
 }
