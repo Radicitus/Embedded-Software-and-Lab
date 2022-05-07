@@ -16,10 +16,34 @@ typedef struct {
 
 
 void play_song(const PlayingNote song[], int length) {
-	int i;
+	int i = 0;
+	int pause = 0;
+	
+	while (i < length) {
+		if(!GET_BIT(PINA, 1)) {
+			SET_BIT(DDRB, 0);
+			avr_wait(5000);
+			CLR_BIT(DDRB, 0);
+			if (pause == 0) {
+				pause = 1;
+			} else {
+				pause = 0;
+			}
+		}
+		
+		if (pause == 0) {
+			play_note(&song[i]);
+			i++;
+		}
+		
+		avr_wait(100);
+	}
+	
+	/*
 	for (i = 0; i < length; i++) {
 		play_note(&song[i]);
 	}
+	*/
 }
 
 void play_note(const PlayingNote* note) {
@@ -101,28 +125,12 @@ void play_note(const PlayingNote* note) {
 	}
 }
 
-PlayingNote test1[] = {
+PlayingNote test[] = {
 	{A, Hn},
 	{As, Hn},
 	{F, Hn},
 	{Gs, Hn},
 	{Fs, Hn},
-};
-
-PlayingNote fur_elise[] = {
-	{A, Qn},
-	{Gs, Qn},
-		
-	{A, Qn},
-	{Gs, Qn},
-		
-	{As, Qn},
-	{E, Hn},
-		
-	{E, Qn},
-	{G, Wn},
-	{F, Qn},
-	{D, Wn}
 };
 
 PlayingNote hot_cross_buns[] = {
@@ -161,8 +169,7 @@ main() {
     while(1)
     {
 		play_song(hot_cross_buns, 17);
-		avr_wait(1000);
-		
+	
 		/*
 		// While button pushed
         if(GET_BIT(PINA, 1)) {
