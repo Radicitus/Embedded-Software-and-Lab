@@ -1,4 +1,5 @@
 #include "avr.h"
+#include "lcd.h"
 
 typedef enum {
 	A, As, B, C, Cs, D, Ds, E, F, Fs, G, Gs
@@ -51,7 +52,7 @@ void play_note(const PlayingNote* note) {
 			k = duration * 240;
 			break;
 		case B:
-			th = 20;
+			th = 10;
 			k = duration * 245;
 			break;
 		case C:
@@ -83,7 +84,7 @@ void play_note(const PlayingNote* note) {
 			k = duration * 370;
 			break;
 		case G:
-			th = 13;
+			th = 12;
 			k = duration * 392;
 			break;
 		case Gs:
@@ -124,6 +125,26 @@ PlayingNote fur_elise[] = {
 	{D, Wn}
 };
 
+PlayingNote hot_cross_buns[] = {
+	{B, Hn},
+	{A, Hn},
+	{G, Wn},
+	{B, Hn},
+	{A, Hn},
+	{G, Hn},
+	{G, Qn},
+	{G, Qn},
+	{G, Qn},
+	{G, Qn},
+	{A, Qn},
+	{A, Qn},
+	{A, Qn},
+	{A, Qn},
+	{B, Hn},
+	{A, Hn},
+	{G, Wn}
+};
+
 main() {
 	// Set button input
 	CLR_BIT(DDRA, 1);
@@ -131,11 +152,15 @@ main() {
 	SET_BIT(DDRB, 0);
 	// Set speaker output
 	SET_BIT(DDRA, 0);
+	// Print Song Title
+	lcd_init();
+	lcd_pos(0, 0);
+	char hcb[15] = "Hot Cross Buns";
+	lcd_puts2(hcb);
 	
     while(1)
     {
-		
-		play_song(fur_elise, 10);
+		play_song(hot_cross_buns, 17);
 		avr_wait(1000);
 		
 		/*
