@@ -59,7 +59,7 @@ void beep(int times) {
 			sound_wait(19);
 		}
 		
-		avr_wait(50);
+		avr_wait(150);
 	}
 }
 
@@ -129,10 +129,10 @@ main() {
 	int current_attempts = 0;
 	
 	// Beep Codes
-	int locked = 1;
-	int unlocked = 2;
-	int incorrect = 3;
-	int prev_used = 4;
+	int locked = 2;
+	int unlocked = 3;
+	int incorrect = 4;
+	int prev_used = 5;
 	
     while(1) {
         
@@ -157,7 +157,7 @@ main() {
 					input_count++;
 				}
 				
-				avr_wait(100);
+				avr_wait(500);
 			}
 			
 			// Input now 4 digits
@@ -176,6 +176,7 @@ main() {
 					
 					for (int i = 0; i < pass_index; i++) {
 						if (current_pass == prev_pass[i]) {
+							avr_wait(500);
 							beep(prev_used);
 							is_prev_used_pass = 1;
 							break;
@@ -183,11 +184,13 @@ main() {
 					}
 					
 					if (!is_prev_used_pass) {
+						avr_wait(500);
 						beep(locked);
 						is_locked = 1;	
 					}
 					
 					is_waiting_for_input = 0;
+					avr_wait(500);
 				}
 				
 				// Enter new pass
@@ -198,6 +201,7 @@ main() {
 					pass_index++;
 					current_pass = -1;
 					is_waiting_for_input = 0;
+					avr_wait(500);
 				}
 			}
 			
@@ -205,9 +209,13 @@ main() {
 			if (current_attempts == max_incorrect_attempt) {
 				locked_out();
 				current_attempts = 0;
+				avr_wait(500);
 			} else {
 				int attempt_input_count = 0;
 				char attempt[4];
+				
+				// Locked beep count
+				int locked_count = 0;
 				
 				// Attempt not 4 digits
 				while (attempt_input_count < pass_len) {
@@ -226,14 +234,20 @@ main() {
 						attempt_input_count++;
 					}
 
-					avr_wait(100);
-					beep(1);
+					if (locked_count == 10) {
+						beep(2);
+						locked_count = 0;
+					}
+
+					avr_wait(500);
+					locked_count++;
 				}
 				
 				// Input now 4 digits
 				int current_attempt = atoi(attempt);
 				
 				if (current_attempt == current_pass) {
+					avr_wait(500);
 					beep(unlocked);
 					
 					prev_pass[pass_index] = current_pass;
@@ -241,7 +255,9 @@ main() {
 					current_pass = -1;
 					
 					is_locked = 0;
+					avr_wait(500);
 				} else {
+					avr_wait(500);
 					beep(incorrect);
 					current_attempts++;
 				}
