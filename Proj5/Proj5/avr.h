@@ -21,6 +21,5 @@
 #define RST() for(;;);
 
 void avr_init(void);
-void avr_wait(unsigned short msec);
 
 #endif
