@@ -4,6 +4,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int num_to_digit(int num) {
+	if (num == 1) {
+		return 1;
+	}
+	if (num == 2) {
+		return 2;
+	}
+	if (num == 3) {
+		return 3;
+	}
+	if (num == 5) {
+		return 4;
+	}
+	if (num == 6) {
+		return 5;
+	}
+	if (num == 7) {
+		return 6;
+	}
+	if (num == 9) {
+		return 7;
+	}
+	if (num == 10) {
+		return 8;
+	}
+	if (num == 11) {
+		return 9;
+	}
+	if (num == 14) {
+		return 0;
+	}
+	return -1;
+}
+
 void sound_wait(unsigned short nsec)
 {
 	TCCR0 = 2;
@@ -85,7 +119,6 @@ main() {
 	
 	// State
 	int is_locked = 0;
-	int is_input_mode = 1;
 	
 	// Password
 	int prev_pass[10];
@@ -99,6 +132,7 @@ main() {
 	int locked = 1;
 	int unlocked = 2;
 	int incorrect = 3;
+	int prev_used = 4;
 	
     while(1) {
         
@@ -110,9 +144,11 @@ main() {
 			while (input_count < pass_len) {
 				
 				// Get input
-				int num = get_key();
+				int num = num_to_digit(get_key());
 				
-				if (num) {
+				if (num != -1) {
+					beep(1);
+					
 					// Convert to string
 					char num_str[1];
 					sprintf(num_str, "%d", num);
@@ -121,7 +157,7 @@ main() {
 					input_count++;
 				}
 				
-				avr_wait(200);
+				avr_wait(100);
 			}
 			
 			// Input now 4 digits
@@ -134,14 +170,30 @@ main() {
 				
 				// Lock
 				if (num == 4) {
-					beep(locked);
-					is_locked = 1;
+					beep(1);
+					
+					int is_prev_used_pass = 0;
+					
+					for (int i = 0; i < pass_index; i++) {
+						if (current_pass == prev_pass[i]) {
+							beep(prev_used);
+							is_prev_used_pass = 1;
+							break;
+						}
+					}
+					
+					if (!is_prev_used_pass) {
+						beep(locked);
+						is_locked = 1;	
+					}
+					
 					is_waiting_for_input = 0;
 				}
 				
 				// Enter new pass
 				if (num == 8) {
 					beep(1);
+					
 					prev_pass[pass_index] = current_pass;
 					pass_index++;
 					current_pass = -1;
@@ -150,30 +202,50 @@ main() {
 			}
 			
 		} else {
-			int attempt_count = 0;
-			char attempt[4];
-			
-			// Attempt not 4 digits
-			while (attempt_count < pass_len) {
+			if (current_attempts == max_incorrect_attempt) {
+				locked_out();
+				current_attempts = 0;
+			} else {
+				int attempt_input_count = 0;
+				char attempt[4];
 				
-				// Get input
-				int num = get_key();
-				
-				if (num) {
-					// Convert to string
-					char num_str[1];
-					sprintf(num_str, "%d", num);
-					strncat(attempt, num_str, 1);
+				// Attempt not 4 digits
+				while (attempt_input_count < pass_len) {
 					
-					attempt_count++;				
-				}
+					// Get input
+					int num = num_to_digit(get_key());
+					
+					if (num != -1) {
+						beep(1);
+						
+						// Convert to string
+						char num_str[1];
+						sprintf(num_str, "%d", num);
+						strncat(attempt, num_str, 1);
+						
+						attempt_input_count++;
+					}
 
-				avr_wait(200);
-				beep(1);
+					avr_wait(100);
+					beep(1);
+				}
+				
+				// Input now 4 digits
+				int current_attempt = atoi(attempt);
+				
+				if (current_attempt == current_pass) {
+					beep(unlocked);
+					
+					prev_pass[pass_index] = current_pass;
+					pass_index++;
+					current_pass = -1;
+					
+					is_locked = 0;
+				} else {
+					beep(incorrect);
+					current_attempts++;
+				}
 			}
-			
-			// Input now 4 digits
-			int current_attempt = atoi(attempt);
 		}
     }
 }
