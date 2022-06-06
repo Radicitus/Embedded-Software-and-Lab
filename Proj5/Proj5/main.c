@@ -4,35 +4,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void flash_led(int num) {
+	for (int i = 0; i < num; i++) {
+		SET_BIT(PORTB, 0);
+		avr_wait(100);
+		CLR_BIT(PORTB, 0);
+		avr_wait(100);
+	}
+}
+
 int num_to_digit(int num) {
 	if (num == 1) {
+		flash_led(1);
 		return 1;
 	}
 	if (num == 2) {
+		flash_led(2);
 		return 2;
 	}
 	if (num == 3) {
+		flash_led(3);
 		return 3;
 	}
 	if (num == 5) {
+		flash_led(4);
 		return 4;
 	}
 	if (num == 6) {
+		flash_led(5);
 		return 5;
 	}
 	if (num == 7) {
+		flash_led(6);
 		return 6;
 	}
 	if (num == 9) {
+		flash_led(7);
 		return 7;
 	}
 	if (num == 10) {
+		flash_led(8);
 		return 8;
 	}
 	if (num == 11) {
+		flash_led(9);
 		return 9;
 	}
 	if (num == 14) {
+		flash_led(10);
 		return 0;
 	}
 	return -1;
@@ -135,10 +154,10 @@ main() {
 	int prev_used = 5;
 	
     while(1) {
-        
+		
 		if (!is_locked) {
 			int input_count = 0;
-			char input[4];
+			char input[5];
 			
 			// Input not 4 digits
 			while (input_count < pass_len) {
@@ -150,8 +169,8 @@ main() {
 					beep(1);
 					
 					// Convert to string
-					char num_str[1];
-					sprintf(num_str, "%d", num);
+					char num_str[10];
+					itoa(num, num_str, 10);
 					strncat(input, num_str, 1);
 					
 					input_count++;
@@ -171,6 +190,7 @@ main() {
 				// Lock
 				if (num == 4) {
 					beep(1);
+					flash_led(2);
 					
 					int is_prev_used_pass = 0;
 					
@@ -196,6 +216,7 @@ main() {
 				// Enter new pass
 				if (num == 8) {
 					beep(1);
+					flash_led(3);
 					
 					prev_pass[pass_index] = current_pass;
 					pass_index++;
@@ -212,7 +233,7 @@ main() {
 				avr_wait(500);
 			} else {
 				int attempt_input_count = 0;
-				char attempt[4];
+				char attempt[5];
 				
 				// Locked beep count
 				int locked_count = 0;
@@ -227,8 +248,8 @@ main() {
 						beep(1);
 						
 						// Convert to string
-						char num_str[1];
-						sprintf(num_str, "%d", num);
+						char num_str[10];
+						itoa(num, num_str, 10);
 						strncat(attempt, num_str, 1);
 						
 						attempt_input_count++;

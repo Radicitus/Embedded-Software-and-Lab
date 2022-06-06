@@ -100,6 +100,6 @@ int main(void)
         int k = num_to_digit(get_key());
 		
 		beep(k);
-		avr_wait(500);
+		avr_wait(2000);
     }
 }
