@@ -169,9 +169,9 @@ main() {
 					beep(1);
 					
 					// Convert to string
-					char num_str[10];
+					char num_str[2];
 					itoa(num, num_str, 10);
-					strncat(input, num_str, 1);
+					input[input_count] = num_str[0];
 					
 					input_count++;
 				}
@@ -248,9 +248,9 @@ main() {
 						beep(1);
 						
 						// Convert to string
-						char num_str[10];
+						char num_str[2];
 						itoa(num, num_str, 10);
-						strncat(attempt, num_str, 1);
+						attempt[attempt_input_count] = num_str[0];
 						
 						attempt_input_count++;
 					}
